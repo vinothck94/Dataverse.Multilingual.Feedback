@@ -3,16 +3,20 @@
 @{
     ViewData["Title"] = "Feedback";
 }
-
+<style>
+.star{
+    font-weight:bold;
+}
+</style>
 
 <form>
     <div class="form-group">
-        <label>@Model.Rating<span class="text-danger">*</span></label>
+        <label>@Model.Rating<span class="text-danger star">  *</span></label>
         <div class="demo"></div>
     </div>
 
     <div class="form-group mt-3">
-        <label>@Model.Comment<span class="text-danger">*</span></label>
+        <label>@Model.Comment<span class="text-danger star">  *</span></label>
         <textarea class="form-control" id="comment" rows="3" required></textarea>
     </div>
 
@@ -68,14 +72,15 @@
             });
 
             $('#btnSubmit').on('click', function (e) {
-                $('.red').remove();
+                $('#comment').removeClass('is-invalid');
                 var isvalid = true;
                 if (ratings == 0) {
-                    $('.demo').after('<div class="red text-danger">Rating is required</div>');
+                    //$('.demo').after('<div class="red text-danger">Rating is required</div>');
                     isvalid = false;
                 }
                 if (!$('#comment').val()) {
-                    $('#comment').after('<div class="red text-danger">Comment is required</div>');
+                    //$('#comment').after('<div class="red text-danger">Comment is required</div>');
+                    $('#comment').addClass('is-invalid');
                     isvalid = false;
                 }
                 if (!isvalid) {
