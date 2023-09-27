@@ -31,7 +31,7 @@ namespace Dataverse.Multilingual.Feedback.Controllers
 
         public async Task<IActionResult> Index([FromQuery] string id, [FromQuery] string gl)
         {
-            if (string.IsNullOrEmpty(id) && string.IsNullOrEmpty(gl))
+            if (string.IsNullOrEmpty(id))
             {
                 return RedirectToAction("Error");
             }
@@ -42,6 +42,15 @@ namespace Dataverse.Multilingual.Feedback.Controllers
                     Rating = _configRoot.GetSection($"{gl}:Rating").Value,
                     Comment = _configRoot.GetSection($"{gl}:Comment").Value
                 };
+                if (feedbackViewModel.Rating == null)
+                {
+                    feedbackViewModel.Rating = _configRoot.GetSection($"EN:Rating").Value;
+                }
+                if (feedbackViewModel.Comment == null)
+                {
+                    feedbackViewModel.Comment = _configRoot.GetSection($"EN:Comment").Value;
+                }
+
                 return View(feedbackViewModel);
             }
             catch (Exception)
