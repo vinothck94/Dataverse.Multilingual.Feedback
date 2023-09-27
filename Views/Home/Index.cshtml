@@ -1,4 +1,4 @@
-﻿@model List<QuestionViewModel>
+﻿@model FeedbackViewModel
 
 @{
     ViewData["Title"] = "Feedback";
@@ -6,79 +6,166 @@
 
 
 <form>
-    @{
-        int ques = 1;
-        foreach (var data in Model)
-        {
-            <div class="form-group">
-                <label>@data.Question <span class="text-danger">*</span></label>
-                <textarea class="form-control answers ans-@ques" rows="3" required></textarea>
-            </div>
-            ques++;
-        }
+    <div class="form-group">
+        <label>@Model.Rating<span class="text-danger">*</span></label>
+        <div class="demo"></div>
+    </div>
+
+    <div class="form-group mt-3">
+        <label>@Model.Comment<span class="text-danger">*</span></label>
+        <textarea class="form-control" id="comment" rows="3" required></textarea>
+    </div>
+
+    @* @{
+    int ques = 1;
+    foreach (var data in Model)
+    {
+    <div class="form-group">
+    <label>@data.Question <span class="text-danger">*</span></label>
+    <textarea class="form-control answers ans-@ques" question="@data.Question" rows="3" required></textarea>
+    </div>
+    ques++;
     }
+    }*@
 
     <button type="button" class="btn btn-primary mt-3" id="btnSubmit">Submit</button>
 </form>
 
 @section Scripts{
     <script>
-        function validate() {
-            $('.red').remove();
-            var isvalid = true;
-            var inputFields = $('.answers');
-            for (var i = 0; i < inputFields.length; i++) {
-                if ($(inputFields[i]).prop('required') && !$(inputFields[i]).val()) {
-                    var field = $(inputFields[i]).attr('field');
-                    $(inputFields[i]).after('<div class="red text-danger">This field is required</div>');
-                    isvalid = false;
-                } else {
-                    $(inputFields[i]).next('div.red').remove();
-                }
-            }
-            return isvalid;
+
+        var ratings = 0;
+
+        function getQueryValue(param) {
+            var urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
         }
+
+        //function validate() {
+        //    $('.red').remove();
+        //    var isvalid = true;
+        //    var inputFields = $('.answers');
+        //    for (var i = 0; i < inputFields.length; i++) {
+        //        if ($(inputFields[i]).prop('required') && !$(inputFields[i]).val()) {
+        //            var field = $(inputFields[i]).attr('field');
+        //            $(inputFields[i]).after('<div class="red text-danger">This field is required</div>');
+        //            isvalid = false;
+        //        } else {
+        //            $(inputFields[i]).next('div.red').remove();
+        //        }
+        //    }
+        //    return isvalid;
+        //}
+
         $(document).ready(function () {
-            $('.answers').on('blur', function (e) {
-                validate();
+
+            $('.demo').raty({
+                cancelButton: true,
+                path: '/images',
+                click: function (score, evt) {
+                    ratings = score;
+                }
             });
 
             $('#btnSubmit').on('click', function (e) {
-                if (validate()) {
-                    $.ajax({
-                        url: "/Home/SaveFeedback",
-                        type: "POST",
-                        data: postdata,
-                        success: function (data, textStatus, jqXHR) {
-                            uploadFiles(data, function () {
-                                Swal.fire({
-                                    title: 'Success',
-                                    text: "Successfully saved",
-                                    icon: 'success',
-                                    confirmButtonColor: '#3085d6',
-                                    confirmButtonText: 'Ok'
-                                }).then((result) => {
-                                    location.reload();
-                                });
-                            });
-                        },
-                        error: function (jqXHR, textStatus, errorThrown) {
-                            console.log(jqXHR);
-                            console.log(textStatus);
-                            console.log(errorThrown);
-
-                            Swal.fire({
-                                title: 'Error!',
-                                text: errorThrown,
-                                icon: 'error',
-                                confirmButtonText: 'Ok'
-                            });
-
-                            $('.submitBtn').prop('disabled', false);
-                        }
-                    });
+                $('.red').remove();
+                var isvalid = true;
+                if (ratings == 0) {
+                    $('.demo').after('<div class="red text-danger">Rating is required</div>');
+                    isvalid = false;
                 }
+                if (!$('#comment').val()) {
+                    $('#comment').after('<div class="red text-danger">Comment is required</div>');
+                    isvalid = false;
+                }
+                if (!isvalid) {
+                    return;
+                }
+
+                var postData = {
+                    rating: ratings + '',
+                    comment: $('#comment').val()
+                };
+
+                $('#btnSubmit').prop('disabled', true);
+                $.ajax({
+                    url: "/Home/SaveFeedback?id=" + getQueryValue("id"),
+                    type: "POST",
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify(postData),
+                    success: function (data, textStatus, jqXHR) {
+                        Swal.fire({
+                            title: 'Success',
+                            text: "Successfully saved",
+                            icon: 'success',
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'Ok'
+                        }).then((result) => {
+                            location.reload();
+                        });
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.log(jqXHR);
+                        console.log(textStatus);
+                        console.log(errorThrown);
+                        Swal.fire({
+                            title: 'Error!',
+                            text: errorThrown,
+                            icon: 'error',
+                            confirmButtonText: 'Ok'
+                        });
+                        $('#btnSubmit').prop('disabled', false);
+                    }
+                });
             });
+
+
+            //$('#btnSubmit').on('click', function (e) {
+            //    if (validate()) {
+            //        var postData = [];
+            //        var inputFields = $('.answers');
+            //        for (var i = 0; i < inputFields.length; i++) {
+            //            postData.push({
+            //                question: $(inputFields[i]).attr('question'),
+            //                answer: $(inputFields[i]).val()
+            //            });
+            //        }
+
+            //        $('#btnSubmit').prop('disabled', true);
+
+            //        $.ajax({
+            //            url: "/Home/SaveFeedback?id=" + getQueryValue("id"),
+            //            type: "POST",
+            //            dataType: 'json',
+            //            contentType: 'application/json',
+            //            data: JSON.stringify(postData),
+            //            success: function (data, textStatus, jqXHR) {
+            //                Swal.fire({
+            //                    title: 'Success',
+            //                    text: "Successfully saved",
+            //                    icon: 'success',
+            //                    confirmButtonColor: '#3085d6',
+            //                    confirmButtonText: 'Ok'
+            //                }).then((result) => {
+            //                    location.reload();
+            //                });
+            //            },
+            //            error: function (jqXHR, textStatus, errorThrown) {
+            //                console.log(jqXHR);
+            //                console.log(textStatus);
+            //                console.log(errorThrown);
+            //                Swal.fire({
+            //                    title: 'Error!',
+            //                    text: errorThrown,
+            //                    icon: 'error',
+            //                    confirmButtonText: 'Ok'
+            //                });
+            //                $('#btnSubmit').prop('disabled', false);
+            //            }
+            //        });
+            //    }
+            //});
         });
     </script>
 }

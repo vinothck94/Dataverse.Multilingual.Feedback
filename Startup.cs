@@ -16,13 +16,7 @@ namespace Dataverse.Multilingual.Feedback
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            
-
-            var appSetting = new Settings();
-            configRoot.GetSection("Configurations").Bind(appSetting);
-            services.AddSingleton<ISettings>(appSetting);
-
-            
+             
             services.AddTransient<IDataverseHelper, DataverseHelper>();
              
 

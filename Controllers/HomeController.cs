@@ -9,34 +9,40 @@ namespace Dataverse.Multilingual.Feedback.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IDataverseHelper _dataverseHelper;
-        private readonly ISettings _settings;
         private readonly IConfiguration _configRoot;
-        public HomeController(ILogger<HomeController> logger, IDataverseHelper dataverseHelper, ISettings settings, IConfiguration configRoot)
+        private readonly string _tenantId;
+        private readonly string _resource;
+        private readonly string _clientId;
+        private readonly string _clientSecret;
+        private readonly string _authority;
+        private readonly string _entityName;
+        public HomeController(ILogger<HomeController> logger, IDataverseHelper dataverseHelper, IConfiguration configRoot)
         {
             _logger = logger;
             _dataverseHelper = dataverseHelper;
-            _settings = settings;
             _configRoot = configRoot;
+            _tenantId = _configRoot.GetSection("DataverseConfig:TenantId").Value;
+            _resource = _configRoot.GetSection("DataverseConfig:Resource").Value;
+            _clientId = _configRoot.GetSection("DataverseConfig:ClientId").Value;
+            _clientSecret = _configRoot.GetSection("DataverseConfig:ClientSecret").Value;
+            _authority = _configRoot.GetSection("DataverseConfig:Authority").Value;
+            _entityName = _configRoot.GetSection("DataverseConfig:EntityName").Value;
         }
 
         public async Task<IActionResult> Index([FromQuery] string id, [FromQuery] string gl)
         {
-            string accessToken = await _dataverseHelper.GetAccessToken("", _settings.DataverseConfig.ClientId, _settings.DataverseConfig.ClientSecret, _settings.DataverseConfig.Authority);
-
             if (string.IsNullOrEmpty(id) && string.IsNullOrEmpty(gl))
             {
                 return RedirectToAction("Error");
             }
             try
             {
-                List<QuestionViewModel> questionViewModel = new()
+                FeedbackViewModel feedbackViewModel = new()
                 {
-                    new QuestionViewModel{Question=_configRoot.GetSection($"{gl}:Question1").Value},
-                    new QuestionViewModel{Question=_configRoot.GetSection($"{gl}:Question2").Value},
-                    new QuestionViewModel{Question=_configRoot.GetSection($"{gl}:Question3").Value},
-                    new QuestionViewModel{Question=_configRoot.GetSection($"{gl}:Question4").Value}
+                    Rating = _configRoot.GetSection($"{gl}:Rating").Value,
+                    Comment = _configRoot.GetSection($"{gl}:Comment").Value
                 };
-                return View(questionViewModel);
+                return View(feedbackViewModel);
             }
             catch (Exception)
             {
@@ -45,9 +51,11 @@ namespace Dataverse.Multilingual.Feedback.Controllers
         }
 
         [HttpPost]
-        public void SaveFeedback([FromBody] List<QuestionViewModel> questionViewModel)
+        public async Task<IActionResult> SaveFeedback([FromQuery] string id, [FromBody] FeedbackViewModel feedbackViewModel)
         {
-
+            string accessToken = await _dataverseHelper.GetAccessToken(_resource, _clientId, _clientSecret, _authority);
+            bool status = await _dataverseHelper.UpdateField(_resource, accessToken, _entityName, id, feedbackViewModel);
+            return Ok(status);
         }
 
         public IActionResult Privacy()
