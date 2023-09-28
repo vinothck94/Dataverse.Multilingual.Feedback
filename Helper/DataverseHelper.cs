@@ -25,10 +25,10 @@ namespace Dataverse.Multilingual.Feedback.Helper
         {
             try
             {
-                //var httpClient = new HttpClient();
-                //httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
-                //var response = await httpClient.GetAsync($"{resource}/api/data/v9.2/{entityName}(a466d72c-035d-ee11-be6f-000d3a4f73e8)");
-                //string responseBody = await response.Content.ReadAsStringAsync();
+                //var httpClient1 = new HttpClient();
+                //httpClient1.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+                //var responseData = await httpClient1.GetAsync($"{resource}/api/data/v9.2/{entityName}(a466d72c-035d-ee11-be6f-000d3a4f73e8)");
+                //string responseB = await responseData.Content.ReadAsStringAsync();
 
                 HttpClient httpClient = new HttpClient();
                 httpClient.DefaultRequestHeaders.Add("OData-MaxVersion", "4.0");
