@@ -7,16 +7,47 @@
 .star{
     font-weight:bold;
 }
+    /*.spaceClass {
+        margin-top: 40px;
+    }*/
+    textarea{
+        resize:none;
+    }
+    textarea:focus{
+        box-shadow:none;
+    }
+    .btn {
+        background-color: #FFC107;
+        border-color: #ffc107;
+    }
+  .btn:hover{
+            background-color: #FFC107;
+            border-color: #ffc107;
+            box-shadow: none !important;
+        }
+   .btn:active {
+            background-color: #FFC107;
+            box-shadow: none !important;
+            border-color: #ffc107;
+    }.btn:focus {
+            background-color: #FFC107;
+            box-shadow: none !important;
+            border-color: #ffc107;
+        }
+    label{
+        font-size:20px;
+    }
 </style>
 
 <form>
-    <div class="form-group">
+
+    <div class="form-group mt-5">
         <label>@Model.Rating<span class="text-danger star">  *</span></label>
         <div class="demo"></div>
     </div>
 
-    <div class="form-group mt-3">
-        <label>@Model.Comment<span class="text-danger star">  *</span></label>
+    <div class="form-group  mt-5">
+        <label style="margin-bottom:8px">@Model.Comment<span class="text-danger star">  *</span></label>
         <textarea class="form-control" id="comment" rows="3" required></textarea>
     </div>
 
@@ -32,7 +63,7 @@
     }
     }*@
 
-    <button type="button" class="btn btn-primary mt-3" id="btnSubmit">Submit</button>
+    <button type="button"  class="btn btn-primary mt-4" id="btnSubmit">Submit</button>
 </form>
 
 @section Scripts{
