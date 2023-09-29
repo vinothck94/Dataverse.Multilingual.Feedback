@@ -1,7 +1,7 @@
 ﻿@model FeedbackViewModel
 
 @{
-    ViewData["Title"] = "Feedback";
+    ViewData["Title"] = Model.Header;
 }
 <style>
 .star{
@@ -63,15 +63,16 @@
     }
     }*@
 
-    <button type="button"  class="btn btn-primary mt-4" id="btnSubmit">Submit</button>
+    <button type="button"  class="btn btn-primary mt-4" id="btnSubmit">@Model.Submit</button>
 </form>
 
 @section Scripts{
     <script>
 
         var ratings = 0;
-        var title = '@Model.Title';
-        var msg = '@Model.Msg';
+        var title = '@Html.Raw(Model.Title)';
+        var msg = '@Html.Raw(Model.Msg)';
+        var confirmBtn = '@Html.Raw(Model.SubmitConfirm)';
 
         function getQueryValue(param) {
             var urlParams = new URLSearchParams(window.location.search);
@@ -139,7 +140,7 @@
                             text: msg,
                             icon: 'success',
                             confirmButtonColor: '#3085d6',
-                            confirmButtonText: 'Ok'
+                            confirmButtonText: confirmBtn
                         }).then((result) => {
                             location.reload();
                         });

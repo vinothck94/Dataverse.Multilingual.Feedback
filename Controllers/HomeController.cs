@@ -43,23 +43,39 @@ namespace Dataverse.Multilingual.Feedback.Controllers
                     Comment = _configRoot.GetSection($"{gl}:Comment").Value,
                     Title = _configRoot.GetSection($"{gl}:Title").Value,
                     Msg = _configRoot.GetSection($"{gl}:Msg").Value,
+                    Header = _configRoot.GetSection($"{gl}:Header").Value,
+                    Submit = _configRoot.GetSection($"{gl}:Submit").Value,
+                    SubmitConfirm = _configRoot.GetSection($"{gl}:SubmitConfirm").Value,
                 };
-                if (feedbackViewModel.Rating == null)
+                if (string.IsNullOrEmpty(feedbackViewModel.Rating))
                 {
                     feedbackViewModel.Rating = _configRoot.GetSection($"EN:Rating").Value;
                 }
-                if (feedbackViewModel.Comment == null)
+                if (string.IsNullOrEmpty(feedbackViewModel.Comment))
                 {
                     feedbackViewModel.Comment = _configRoot.GetSection($"EN:Comment").Value;
                 }
-                if (feedbackViewModel.Title == null)
+                if (string.IsNullOrEmpty(feedbackViewModel.Title))
                 {
                     feedbackViewModel.Title = _configRoot.GetSection($"EN:Title").Value;
                 }
-                if (feedbackViewModel.Msg == null)
+                if (string.IsNullOrEmpty(feedbackViewModel.Msg))
                 {
                     feedbackViewModel.Msg = _configRoot.GetSection($"EN:Msg").Value;
                 }
+                if (string.IsNullOrEmpty(feedbackViewModel.Header))
+                {
+                    feedbackViewModel.Header = _configRoot.GetSection($"EN:Header").Value;
+                }
+                if (string.IsNullOrEmpty(feedbackViewModel.Submit))
+                {
+                    feedbackViewModel.Submit = _configRoot.GetSection($"EN:Submit").Value;
+                }
+                if (string.IsNullOrEmpty(feedbackViewModel.SubmitConfirm))
+                {
+                    feedbackViewModel.SubmitConfirm = _configRoot.GetSection($"EN:SubmitConfirm").Value;
+                }
+
                 return View(feedbackViewModel);
             }
             catch (Exception)
