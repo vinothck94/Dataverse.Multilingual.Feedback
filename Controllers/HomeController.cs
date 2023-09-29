@@ -40,7 +40,9 @@ namespace Dataverse.Multilingual.Feedback.Controllers
                 FeedbackViewModel feedbackViewModel = new()
                 {
                     Rating = _configRoot.GetSection($"{gl}:Rating").Value,
-                    Comment = _configRoot.GetSection($"{gl}:Comment").Value
+                    Comment = _configRoot.GetSection($"{gl}:Comment").Value,
+                    Title = _configRoot.GetSection($"{gl}:Title").Value,
+                    Msg = _configRoot.GetSection($"{gl}:Msg").Value,
                 };
                 if (feedbackViewModel.Rating == null)
                 {
@@ -50,7 +52,14 @@ namespace Dataverse.Multilingual.Feedback.Controllers
                 {
                     feedbackViewModel.Comment = _configRoot.GetSection($"EN:Comment").Value;
                 }
-
+                if (feedbackViewModel.Title == null)
+                {
+                    feedbackViewModel.Title = _configRoot.GetSection($"EN:Title").Value;
+                }
+                if (feedbackViewModel.Msg == null)
+                {
+                    feedbackViewModel.Msg = _configRoot.GetSection($"EN:Msg").Value;
+                }
                 return View(feedbackViewModel);
             }
             catch (Exception)
